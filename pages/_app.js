@@ -22,7 +22,7 @@ const MyApp = (props) => {
   return (
     <>
       <Head>
-        <title>Farm One</title>
+        <title>Farm</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <CacheProvider value={emotionCache}>
