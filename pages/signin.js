@@ -18,7 +18,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { getSession, getCsrfToken, signIn } from "next-auth/react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useRouter } from "next/router";
-import axios from "axios";
 
 //validate
 const schema = yup
@@ -30,7 +29,6 @@ const schema = yup
 
 const SignIn = ({ csrfToken }) => {
   const router = useRouter();
-  const session = getSession();
   const {
     register,
     handleSubmit,
@@ -41,23 +39,20 @@ const SignIn = ({ csrfToken }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const onSubmit = async (data) => {
-    const res = await fetch("/api/auth/callback/credentials", {
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
+    const { ok, error, url } = await signIn("credentials", {
+      userId: data.userId,
+      password: data.password,
+      callbackUrl: `${window.location.origin}/`,
+      redirect: false,
     });
-    if (res.redirected && res.url && session) {
-      signIn();
-    }
+    if (ok) return router.push(url);
+    console.log(error);
   };
 
   return (
     <>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-
         <Grid
           item
           xs={false}
@@ -96,15 +91,9 @@ const SignIn = ({ csrfToken }) => {
               noValidate
               method="POST"
               onSubmit={handleSubmit(onSubmit)}
-              // action="/api/auth/callback/credentials"
               sx={{ mt: 1 }}
             >
-              <TextField
-                name="csrfToken"
-                type="hidden"
-                defaultValue={csrfToken}
-                {...register("csrfToken")}
-              />
+              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
               <TextField
                 margin="normal"
                 required

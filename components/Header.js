@@ -116,7 +116,9 @@ export default function MiniDrawer() {
                   key="Signout"
                   onClick={() => {
                     handleCloseUserMenu();
-                    signOut();
+                    signOut({
+                      callbackUrl: `${window.location.origin}`,
+                    });
                   }}
                 >
                   <Typography textAlign="center">Sign out</Typography>

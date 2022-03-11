@@ -12,8 +12,6 @@ const options = {
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        console.log(credentials);
-        console.log(req.body);
         const user = {
           id: 1,
           name: req.body.userId,
@@ -26,6 +24,7 @@ const options = {
           return user;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
+          // throw new Error('error message')
           return null;
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
@@ -57,7 +56,15 @@ const options = {
     maxAge: 60 * 60 * 24 * 1,
     encryption: true,
   },
-  // Optional SQL or MongoDB database to persist users
+  session: {
+    // Seconds - How long until an idle session expires and is no longer valid.
+    maxAge: 1 * 24 * 60 * 60, //  1 days
+
+    // Seconds - Throttle how frequently to write to database to extend a session.
+    // Use it to limit write operations. Set to 0 to always update the database.
+    // Note: This option is ignored if using JSON Web Tokens
+    updateAge: 24 * 60 * 60, // 24 hours
+  },
 };
 
 export default (req, res) => NextAuth(req, res, options);
